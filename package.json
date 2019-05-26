@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "modules": "github:jobscale/core",
+    "core": "github:jobscale/core",
     "shell": "github:jobscale/shell"
   }
 }

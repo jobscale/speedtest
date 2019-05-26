@@ -1,4 +1,4 @@
-require('modules');
+require('core');
 const { Shell } = require('shell');
 class SpeedTest {
   constructor() {
