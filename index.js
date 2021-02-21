@@ -2,12 +2,13 @@ require('core');
 const { Shell } = require('shell');
 class SpeedTest {
   constructor() {
-    this.cmd = 'speedtest-cli --simple --share';
+    this.cmd = 'speedtest-cli';
+    this.args = ['--simple', '--share'];
   }
   run() {
-    return new Shell().exec(this.cmd)
+    return new Shell().exec(this.cmd, this.args)
     .then(res => res)
-    .catch(e => e.message);
+    .catch(e => e.toString());
   }
 }
 module.exports = {

@@ -4,13 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "echo \"const { SpeedTest } = require('.'); new SpeedTest().run().then(res => logger.info(res));\" | node",
+    "lint": "eslint .",
+    "test": "npm run lint"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "core": "github:jobscale/core",
     "shell": "github:jobscale/shell"
+  },
+  "devDependencies": {
+    "eslint": "^7.20.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
