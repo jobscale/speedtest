@@ -6,7 +6,7 @@ class SpeedTest {
     this.args = ['--simple', '--share'];
   }
   run() {
-    return new Shell().exec(this.cmd, this.args)
+    return new Shell().spawn(this.cmd, this.args)
     .then(res => res)
     .catch(e => e.toString());
   }
