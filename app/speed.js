@@ -5,7 +5,9 @@ const urls = [
 
 module.exports = async () => {
   const begin = Date.now();
-  await fetch(urls[0]);
-  await fetch(urls[1]);
+  await Promise.all([
+    fetch(urls[0]),
+    fetch(urls[1]),
+  ]);
   return Math.floor((1000 / (Date.now() - begin)) * 100) / 100;
 };
