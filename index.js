@@ -14,9 +14,14 @@ class App {
   }
 
   execute() {
-    return speed.fetch(3)
+    return speed.fetch(2)
     .then(res => {
-      const text = `${res.downloadSpeed * 8} Mbps`;
+      const sum = [
+        `Download ${res.download * 8} Mbps`,
+        `Upload ${res.upload * 8} Mbps`,
+        `Latency ${res.latency} ms`,
+      ];
+      const text = sum.join('\n');
       logger.info(text);
       this.postSlack({
         channel: 'C4WN3244D',
