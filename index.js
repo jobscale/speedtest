@@ -4,7 +4,7 @@ const logger = console;
 
 class App {
   postSlack(data) {
-    const url = 'https://tanpo.jsx.jp/api/slack';
+    const url = 'https://jsx.jp/api/slack';
     const options = {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
