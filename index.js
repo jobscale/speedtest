@@ -23,7 +23,7 @@ class App {
       ];
       const text = sum.join('\n');
       logger.info(text);
-      this.postSlack({
+      return this.postSlack({
         channel: 'C4WN3244D',
         icon_emoji: ':rocket:',
         username: 'Net speed',
