@@ -18,14 +18,15 @@ class App {
   async fetch(length) {
     const test = [];
     if (!length || length < 1) length = 3;
-    for (let i = 0; i < length;) {
+    for (let i = 0; i < length; i++) {
+      if (i) await wait(200);
       test.push(await speed());
-      if (++i < length) await wait(200);
     }
+    const MAX_VALUE = 2 ** 16;
     return test.reduce((acc, value) => ({
-      latency: Math.min(acc.latency || 2 ** 16, value.latency),
-      download: Math.max(acc.download || 0, value.download),
-      upload: Math.max(acc.upload || 0, value.upload),
+      latency: Math.min(acc.latency || MAX_VALUE, value.latency),
+      download: Math.min(acc.download || MAX_VALUE, value.download),
+      upload: Math.min(acc.upload || MAX_VALUE, value.upload),
     }), {});
   }
 }

@@ -38,6 +38,4 @@ class App {
 }
 
 new App().start()
-.catch(e => {
-  logger.error(e.message, e);
-});
+.catch(e => logger.error(e));
