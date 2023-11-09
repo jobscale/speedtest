@@ -1,6 +1,6 @@
 const latencyUrls = [
   'https://site-assets.fontawesome.com',
-  'https://www.jsx.jp',
+  'https://jsx.jp',
 ];
 
 const downloadUrls = [
@@ -9,31 +9,56 @@ const downloadUrls = [
 ];
 
 const uploadUrls = [
-  'https://www.jsx.jp/favicon.ico',
-  'https://www.jsx.jp/assets/img/okutan.svg',
+  'https://jsx.jp/auth/totp',
 ];
 
-module.exports = async () => {
-  const beginHead = Date.now();
-  await Promise.all([
-    fetch(latencyUrls[0], { method: 'head' }),
-    fetch(latencyUrls[1], { method: 'head' }),
-  ]);
-  const latency = Date.now() - beginHead;
+class NetSpeed {
+  async latency() {
+    const beginHead = Date.now();
+    await Promise.all([
+      fetch(latencyUrls[0], { method: 'head' }),
+      fetch(latencyUrls[1], { method: 'head' }),
+    ]);
+    return Date.now() - beginHead;
+  }
 
-  const beginDown = Date.now();
-  await Promise.all([
-    fetch(downloadUrls[0]),
-    fetch(downloadUrls[1]),
-  ]);
-  const download = Math.floor((1000 / (Date.now() - beginDown)) * 100) / 100;
+  async download() {
+    const beginDown = Date.now();
+    await Promise.all([
+      fetch(downloadUrls[0]),
+      fetch(downloadUrls[1]),
+    ]);
+    return Math.floor((1000 / (Date.now() - beginDown)) * 100) / 100;
+  }
 
-  const beginUp = Date.now();
-  await Promise.all([
-    fetch(uploadUrls[0]),
-    fetch(uploadUrls[1]),
-  ]);
-  const upload = Math.floor((500 / (Date.now() - beginUp)) * 100) / 100;
+  async upload() {
+    const beginUp = Date.now();
+    const data = { buffer: '100KB' };
+    for (let i = 7330; i; i--) {
+      data.buffer += `/${Date.now()}`;
+    }
+    await Promise.all([
+      fetch(uploadUrls[0], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+      fetch(uploadUrls[0], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    ]);
+    return Math.floor((Date.now() - beginUp) / 100) / 100;
+  }
+}
 
-  return { latency, download, upload };
+module.exports = {
+  speedTest: async () => {
+    const speed = new NetSpeed();
+    const latency = await speed.latency();
+    const download = await speed.download();
+    const upload = await speed.upload();
+    return { latency, download, upload };
+  },
 };

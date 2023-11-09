@@ -1,4 +1,4 @@
-const speedTest = require('./speed');
+const { speedTest } = require('./speed');
 
 const logger = console;
 
