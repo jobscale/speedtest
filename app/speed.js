@@ -14,25 +14,25 @@ const uploadUrls = [
 
 class NetSpeed {
   async latency() {
-    const beginHead = Date.now();
+    const begin = Date.now();
     await Promise.all([
       fetch(latencyUrls[0], { method: 'head' }),
       fetch(latencyUrls[1], { method: 'head' }),
     ]);
-    return Date.now() - beginHead;
+    return Date.now() - begin;
   }
 
   async download() {
-    const beginDown = Date.now();
+    const begin = Date.now();
     await Promise.all([
       fetch(downloadUrls[0]),
       fetch(downloadUrls[1]),
     ]);
-    return Math.floor((1000 / (Date.now() - beginDown)) * 100) / 100;
+    return Math.floor((1000 / (Date.now() - begin)) * 100) / 100;
   }
 
   async upload() {
-    const beginUp = Date.now();
+    const begin = Date.now();
     const data = { buffer: '100KB' };
     for (let i = 7330; i; i--) {
       data.buffer += `/${Date.now()}`;
@@ -49,7 +49,7 @@ class NetSpeed {
         body: JSON.stringify(data),
       }),
     ]);
-    return Math.floor((Date.now() - beginUp) / 100) / 100;
+    return Math.floor((Date.now() - begin) / 10) / 100;
   }
 }
 
