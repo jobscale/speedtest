@@ -24,7 +24,7 @@ class App {
       const text = sum.join('\n');
       logger.info(text);
       return this.postSlack({
-        channel: 'C4WN3244D',
+        channel: 'push',
         icon_emoji: ':rocket:',
         username: 'Net speed',
         text,
