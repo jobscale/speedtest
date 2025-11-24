@@ -2,21 +2,20 @@
   "name": "speedtest",
   "version": "0.0.1",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "lint": "eslint .",
+    "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@cloudflare/speedtest": "^1.0.5"
+    "@cloudflare/speedtest": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "^8.37.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5"
+    "eslint": "^9.39.1"
   }
 }
