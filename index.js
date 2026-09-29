@@ -1,4 +1,4 @@
-const { app: speed } = require('./app');
+import { app as speed } from './app/index.js';
 
 const logger = console;
 
