@@ -39,17 +39,15 @@ class App {
     await this.execute();
     // 初回成功は OK
     if (mem.late <= 0) return;
-    const notify = mem.late >= 3;
-    if (!notify && opts.attempts) {
-      await new Promise(resolve => { setTimeout(resolve, 1_000); });
-      // V8 エンジンは引数がスコープ内の変数になる
+    // 初回に失敗したら 3 回再試行
+    if (opts.attempts) {
+      await new Promise(resolve => { setTimeout(resolve, 2_000); });
       opts.attempts--;
-      await this.check(opts); // 再帰呼び出しは一般的なロジック
+      await this.check(opts);
       return;
     }
-    if (!notify) return;
-    // 初回に失敗したら 3 回再試行
-    // 4 回中 3 回以上失敗した場合は通知して再起動
+    if (mem.late < 4) return;
+    // 4 回中 4 回以上失敗したら通知して再起動
     logger.info('Rebooting device due to repeated slow speeds...');
     const text = store.getItem('text');
     await this.postSlack({
