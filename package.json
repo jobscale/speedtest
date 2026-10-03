@@ -1,8 +1,10 @@
 {
   "name": "speedtest",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "speedtest",
-  "keywords": ["speedtest"],
+  "keywords": [
+    "speedtest"
+  ],
   "author": "jobscale <jobscale@users.noreply.github.com>",
   "license": "MIT",
   "type": "module",
@@ -10,13 +12,15 @@
   "scripts": {
     "start": "node index.js",
     "lint": "eslint",
-    "test": "npm run lint"
+    "prettest": "date -Iseconds",
+    "posttest": "npm run lint",
+    "test": "echo test"
   },
   "dependencies": {
     "@cloudflare/speedtest": "^1.14.1"
   },
   "devDependencies": {
     "@jobscale/eslint-plugin-standard": "^0.1.4",
-    "eslint": "^10.11.0"
+    "eslint": "^10.12.0"
   }
 }

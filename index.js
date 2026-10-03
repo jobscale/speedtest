@@ -1,6 +1,9 @@
 import { app as speed } from './app/index.js';
+import { store } from './app/store.js';
+import { rebootDevice } from './app/reboot/index.js';
 
-const logger = console;
+const logger = { ...console };
+const mem = { late: 0 };
 
 class App {
   postSlack(data) {
@@ -16,24 +19,50 @@ class App {
   execute() {
     return speed.fetch(2)
     .then(res => {
-      const sum = [
+      const result = [
         `Download ${res.download * 8} Mbps`,
         `Upload ${res.upload * 8} Mbps`,
         `Latency ${res.latency} ms`,
       ];
-      const text = sum.join('\n');
+      const text = result.join('\n');
       logger.info(text);
-      return this.postSlack({
-        channel: 'push',
-        icon_emoji: ':rocket:',
-        username: 'Net speed',
-        text,
-      });
+      store.setItem('text', text);
+
+      if (res.download < 0.1 || res.upload < 0.1 || res.latency > 800) {
+        mem.late++;
+      }
+      store.setItem('late', mem.late);
     });
   }
 
-  async start() {
+  async check(opts = { attempts: 3 }) {
     await this.execute();
+    // 初回成功は OK
+    if (mem.late <= 0) return;
+    const notify = mem.late >= 3;
+    if (!notify && opts.attempts) {
+      await new Promise(resolve => { setTimeout(resolve, 1_000); });
+      // V8 エンジンは引数がスコープ内の変数になる
+      opts.attempts--;
+      await this.check(opts); // 再帰呼び出しは一般的なロジック
+      return;
+    }
+    if (!notify) return;
+    // 初回に失敗したら 3 回再試行
+    // 4 回中 3 回以上失敗した場合は通知して再起動
+    logger.info('Rebooting device due to repeated slow speeds...');
+    const text = store.getItem('text');
+    await this.postSlack({
+      channel: 'push',
+      icon_emoji: ':rocket:',
+      username: 'Net speed',
+      text,
+    });
+    await rebootDevice();
+  }
+
+  async start() {
+    await this.check();
   }
 }
 

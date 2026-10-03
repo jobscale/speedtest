@@ -13,38 +13,60 @@ const uploadUrls = [
 ];
 
 export class NetSpeed {
+  /**
+   * @returns milliseconds
+   */
   async latency() {
-    const begin = Date.now();
-    await fetch(latencyUrls[0], { method: 'HEAD' });
-    return Date.now() - begin;
+    const begin = performance.now();
+    await fetch(`${latencyUrls[0]}?t=${Date.now()}`, { method: 'HEAD' });
+    return Number.parseFloat((performance.now() - begin).toFixed(1));
   }
 
+  /**
+   * @returns MB per sec
+   */
   async download() {
-    const begin = Date.now();
-    const size = await fetch(downloadUrls[0], {
+    const begin = performance.now();
+    const res = await fetch(`${downloadUrls[0]}?t=${Date.now()}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ timestamp: Date.now() }),
-    })
-    .then(res => res.blob())
-    .then(buffer => buffer.size);
-    const duration = Math.max(Date.now() - begin, 1);
-    return Math.floor(size * 2 / duration / 10) / 100;
+    });
+
+    const buffer = await res.arrayBuffer();
+    const size = buffer.byteLength;
+
+    const duration = Math.max(performance.now() - begin, 1);
+
+    // 単位計算: size(bytes) / duration(ms) * 0.001 = MB/s
+    const mbPerSec = size / duration * 0.001;
+    return Number.parseFloat(mbPerSec.toFixed(2));
   }
 
+  /**
+   * @returns MB per sec
+   */
   async upload() {
-    const begin = Date.now();
-    const size = 100_000;
-    const data = {
-      buffer: crypto.randomBytes(size),
-    };
+    const size = 100_000; // 100KB の低負荷測定
+    const payload = crypto.randomBytes(size);
+
+    const begin = performance.now();
     await fetch(uploadUrls[0], {
       method: 'POST',
-      headers: { 'Content-Type': 'application/octet-stream' },
-      body: data.buffer,
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        // Node.jsのfetchで確実にContent-Lengthを伝えるための明示
+        'Content-Length': size.toString(),
+      },
+      // Uint8Arrayに変換して渡すことで、ブラウザ互換のfetch APIレイヤーでの互換性を保証
+      body: new Uint8Array(payload),
     });
-    const duration = Math.max(Date.now() - begin, 1);
-    return Math.floor(size / duration / 10) / 100;
+
+    const duration = Math.max(performance.now() - begin, 1);
+
+    // 単位計算: size(bytes) / duration(ms) * 0.001 = MB/s
+    const mbPerSec = size / duration * 0.001;
+    return Number.parseFloat(mbPerSec.toFixed(2));
   }
 }
 
