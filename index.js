@@ -1,3 +1,4 @@
+import { formatTimestamp } from '@jobscale/timestamp';
 import { app as speed } from './app/index.js';
 import { store } from './app/store.js';
 import { rebootDevice } from './app/reboot/index.js';
@@ -24,7 +25,7 @@ class App {
         `Upload ${(res.upload * 8).toFixed(2)} Mbps`,
         `Latency ${res.latency.toFixed(1)} ms`,
       ];
-      logger.info('minimum', result);
+      logger.info(formatTimestamp({ tz: false }), result);
       const text = result.join('\n');
       store.setItem('text', text);
 

@@ -1,6 +1,6 @@
 {
   "name": "speedtest",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "speedtest",
   "keywords": [
     "speedtest"
@@ -17,7 +17,8 @@
     "test": "echo test"
   },
   "dependencies": {
-    "@cloudflare/speedtest": "^1.14.1"
+    "@cloudflare/speedtest": "^1.14.1",
+    "@jobscale/timestamp": "^0.0.8"
   },
   "devDependencies": {
     "@jobscale/eslint-plugin-standard": "^0.1.4",
