@@ -4,9 +4,9 @@ const logger = console;
 
 const speed = () => speedTest().then(res => {
   logger.info([
-    `Download ${res.download * 8} Mbps`,
-    `Upload ${res.upload * 8} Mbps`,
-    `Latency ${res.latency} ms`,
+    `Download ${(res.download * 8).toFixed(2)} Mbps`,
+    `Upload ${(res.upload * 8).toFixed(2)} Mbps`,
+    `Latency ${res.latency.toFixed(1)} ms`,
   ]);
   return res;
 }).catch(e => logger.error(e));

@@ -20,12 +20,12 @@ class App {
     return speed.fetch(2)
     .then(res => {
       const result = [
-        `Download ${res.download * 8} Mbps`,
-        `Upload ${res.upload * 8} Mbps`,
-        `Latency ${res.latency} ms`,
+        `Download ${(res.download * 8).toFixed(2)} Mbps`,
+        `Upload ${(res.upload * 8).toFixed(2)} Mbps`,
+        `Latency ${res.latency.toFixed(1)} ms`,
       ];
+      logger.info('minimum', result);
       const text = result.join('\n');
-      logger.info(text);
       store.setItem('text', text);
 
       if (res.download < 0.1 || res.upload < 0.1 || res.latency > 800) {
@@ -41,7 +41,7 @@ class App {
     if (mem.late <= 0) return;
     // 初回に失敗したら 3 回再試行
     if (opts.attempts) {
-      await new Promise(resolve => { setTimeout(resolve, 2_000); });
+      await new Promise(resolve => { setTimeout(resolve, 15_000); });
       opts.attempts--;
       await this.check(opts);
       return;
@@ -56,7 +56,9 @@ class App {
       username: 'Net speed',
       text,
     });
+    await new Promise(resolve => { setTimeout(resolve, 1_000); });
     await rebootDevice();
+    process.exit(1);
   }
 
   async start() {
