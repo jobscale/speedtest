@@ -4,7 +4,7 @@ import { store } from './app/store.js';
 import { rebootDevice } from './app/reboot/index.js';
 
 const logger = { ...console };
-const mem = { late: 0 };
+const memo = { ok: false };
 
 class App {
   postSlack(data) {
@@ -29,26 +29,20 @@ class App {
       const text = result.join('\n');
       store.setItem('text', text);
 
-      if (res.download < 0.1 || res.upload < 0.1 || res.latency > 800) {
-        mem.late++;
-      }
-      store.setItem('late', mem.late);
+      const ng = res.download < 0.1 || res.upload < 0.1 || res.latency > 800;
+      memo.ok = !ng;
     });
   }
 
   async check(opts = { attempts: 3 }) {
     await this.execute();
-    // 初回成功は OK
-    if (mem.late <= 0) return;
-    // 初回に失敗したら 3 回再試行
+    if (memo.ok) return;
     if (opts.attempts) {
       await new Promise(resolve => { setTimeout(resolve, 15_000); });
       opts.attempts--;
       await this.check(opts);
       return;
     }
-    if (mem.late < 4) return;
-    // 4 回中 4 回以上失敗したら通知して再起動
     logger.info('Rebooting device due to repeated slow speeds...');
     const text = store.getItem('text');
     await this.postSlack({
