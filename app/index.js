@@ -9,7 +9,7 @@ const speed = () => speedTest().then(res => {
     `Latency ${res.latency.toFixed(1)} ms`,
   ]);
   return res;
-}).catch(e => logger.error(e));
+});
 
 export class App {
   async fetch(length) {

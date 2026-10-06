@@ -29,12 +29,12 @@ class App {
       const text = result.join('\n');
       store.setItem('text', text);
 
-      const ng = res.download < 0.1 || res.upload < 0.1 || res.latency > 800;
+      const ng = res.download < 0.1 || res.upload < 0.07 || res.latency > 700;
       memo.ok = !ng;
     });
   }
 
-  async check(opts = { attempts: 3 }) {
+  async check(opts = { attempts: 4 }) {
     await this.execute();
     if (memo.ok) return;
     if (opts.attempts) {
@@ -62,4 +62,4 @@ class App {
 }
 
 new App().start()
-.catch(e => logger.error(e));
+.catch(e => logger.error(e.cause?.message ?? e.cause ?? e.message));
