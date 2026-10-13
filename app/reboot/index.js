@@ -1,6 +1,9 @@
+import { createLogger } from '@jobscale/create-logger';
 import { store } from '../store.js';
 
-const logger = console;
+const { LOG_LEVEL } = process.env;
+
+const logger = createLogger(LOG_LEVEL || 'info');
 const endpoint = 'http://192.168.0.1';
 const cookie = 'PHPSESSID=6kh3ruiej9g33bvse1qppk8oe7';
 const headers = {

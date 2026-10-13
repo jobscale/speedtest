@@ -1,9 +1,12 @@
+import { createLogger } from '@jobscale/create-logger';
 import { formatTimestamp } from '@jobscale/timestamp';
 import { app as speed } from './app/index.js';
 import { store } from './app/store.js';
 import { rebootDevice } from './app/reboot/index.js';
 
-const logger = { ...console };
+const { LOG_LEVEL } = process.env;
+
+const logger = createLogger(LOG_LEVEL || 'info');
 const memo = { ok: false };
 
 class App {
@@ -20,17 +23,16 @@ class App {
   execute() {
     return speed.fetch(2)
     .then(res => {
+      const ng = res.download < 0.1 || res.upload < 0.07 || res.latency > 700;
+      memo.ok = !ng;
       const result = [
         `Download ${(res.download * 8).toFixed(2)} Mbps`,
         `Upload ${(res.upload * 8).toFixed(2)} Mbps`,
         `Latency ${res.latency.toFixed(1)} ms`,
       ];
-      logger.info(formatTimestamp({ tz: false }), result);
+      logger.info(formatTimestamp({ tz: false }), result, memo.ok ? 'OK' : 'NG');
       const text = result.join('\n');
       store.setItem('text', text);
-
-      const ng = res.download < 0.1 || res.upload < 0.07 || res.latency > 700;
-      memo.ok = !ng;
     });
   }
 

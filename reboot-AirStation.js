@@ -1,8 +1,11 @@
-import { request as httpRequest } from 'node:http';
-import { realpathSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
+import { request as httpRequest } from 'http';
+import { realpathSync } from 'fs';
+import { pathToFileURL } from 'url';
+import { createLogger } from '@jobscale/create-logger';
 
-const logger = { ...console };
+const { LOG_LEVEL } = process.env;
+
+const logger = createLogger(LOG_LEVEL || 'info');
 const baseUrl = 'http://172.16.6.1';
 const rebootPageUrl = new URL('/cgi-bin/cgi?req=frm&frm=init.html', baseUrl);
 const authorization = `Basic ${Buffer.from('root:').toString('base64')}`;
@@ -29,7 +32,7 @@ function getRebootForm(html) {
     const formBody = match[2];
     const rebootButton = [...formBody.matchAll(/<input\b[^>]*>/gi)]
     .map(([tag]) => parseAttributes(tag))
-    .find((attributes) => attributes.get('name')?.toLowerCase() === 'reboot');
+    .find(attributes => attributes.get('name')?.toLowerCase() === 'reboot');
 
     if (!rebootButton) continue;
 
@@ -94,9 +97,9 @@ function requestRouter(url, options = {}) {
         },
         insecureHTTPParser: true,
       },
-      (response) => {
+      response => {
         const chunks = [];
-        response.on('data', (chunk) => chunks.push(chunk));
+        response.on('data', chunk => chunks.push(chunk));
         response.on('error', reject);
         response.on('end', () => {
           const status = response.statusCode ?? 0;
@@ -158,8 +161,8 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href
 ) {
-  rebootRouter().catch((error) => {
-    logger.error(`Router reboot failed: ${error.message}`);
+  rebootRouter().catch(e => {
+    logger.error(`Router reboot failed: ${e.message}`);
     process.exitCode = 1;
   });
 }

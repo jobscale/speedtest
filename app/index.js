@@ -1,9 +1,12 @@
+import { createLogger } from '@jobscale/create-logger';
 import { speedTest } from './speed.js';
 
-const logger = console;
+const { LOG_LEVEL } = process.env;
+
+const logger = createLogger(LOG_LEVEL || 'info');
 
 const speed = () => speedTest().then(res => {
-  logger.info([
+  logger.debug([
     `Download ${(res.download * 8).toFixed(2)} Mbps`,
     `Upload ${(res.upload * 8).toFixed(2)} Mbps`,
     `Latency ${res.latency.toFixed(1)} ms`,
