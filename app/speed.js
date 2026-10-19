@@ -1,15 +1,16 @@
 import crypto from 'crypto';
 
 const latencyUrls = [
-  'https://jsx.jp',
+  'https://timer.cdn.jsx.jp',
+  'https://api.jsx.jp/ip',
 ];
 
 const downloadUrls = [
-  'https://jsx.jp/api/speed',
+  'https://api.jsx.jp/api/speed',
 ];
 
 const uploadUrls = [
-  'https://jsx.jp/auth/totp',
+  'https://api.jsx.jp/auth/totp',
 ];
 
 export class NetSpeed {
