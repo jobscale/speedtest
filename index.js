@@ -3,7 +3,9 @@ import { createLogger } from '@jobscale/create-logger';
 import { formatTimestamp } from '@jobscale/timestamp';
 import { app as speed } from './app/index.js';
 import { store } from './app/store.js';
-import { rebootDevice } from './app/reboot/index.js';
+import { rakuten } from './app/rakuten/index.js';
+import { repeater } from './app/repeater/index.js';
+import { wifi } from './app/wifi/index.js';
 
 const { LOG_LEVEL, SOUND } = process.env;
 
@@ -66,7 +68,12 @@ class App {
       text,
     });
     await new Promise(resolve => { setTimeout(resolve, 1_000); });
-    await rebootDevice();
+    const stack = await wifi.list();
+    const ssid = stack.out.join('').split('\n').filter(v => /^[*]/.test(v))[0].split(/[ ]+/)[2];
+    if (ssid !== 'BE-1ce-5G') await wifi.attach('BE-1ce-5G');
+    await repeater.info();
+    await wifi.attach('jobs');
+    await rakuten.reboot();
     process.exit(1);
   }
 

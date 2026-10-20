@@ -113,3 +113,13 @@ const self = {
 export const rebootDevice = async () => {
   await self.main();
 };
+
+export const rakuten = {
+  reboot() {
+    return self.getCsrfToken()
+    .then(() => self.login())
+    .then(() => self.operate())
+    .then(() => self.reboot())
+    .catch(e => logger.error(e.message));
+  },
+};

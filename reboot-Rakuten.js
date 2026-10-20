@@ -1,3 +1,3 @@
-import { rebootDevice } from './app/reboot/index.js';
+import { rakuten } from './app/rakuten/index.js';
 
-rebootDevice();
+rakuten.reboot();
