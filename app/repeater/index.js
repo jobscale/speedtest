@@ -2,68 +2,44 @@ import { spawn } from 'child_process';
 import { createLogger } from '@jobscale/create-logger';
 
 const { LOG_LEVEL } = process.env;
-
 const logger = createLogger(LOG_LEVEL || 'info');
 
 class Repeater {
-  info() {
-    const remote = 'iwinfo apcli0 info && date';
+  /**
+   * 外部コマンドを実行する共通プライベートメソッド
+   */
+  #exec(command) {
     return new Promise(resolve => {
       const stack = { out: [], err: [] };
-      const terminal = spawn('ssh', ['router', remote]);
+      const terminal = spawn('ssh', ['router', command]);
       terminal.stdout.on('data', stream => stack.out.push(stream.toString()));
       terminal.stderr.on('data', stream => stack.err.push(stream.toString()));
       terminal.on('close', code => {
-        if (code) logger.warn('remote failed');
-        logger.info(stack.out.join(''));
+        if (code) logger.warn('command failed');
+        if (stack.out.length) logger.info(stack.out.join(''));
         if (stack.err.length) logger.warn('stderr', stack.err.join(''));
-        resolve(code);
+        resolve({ ...stack, code });
       });
       terminal.on('error', e => {
         logger.error(e.message);
-        resolve(179);
+        resolve({ ...stack, code: 179 });
       });
     });
+  }
+
+  info() {
+    const remote = 'iwinfo apcli0 info && date';
+    return this.#exec(remote);
   }
 
   reset() {
     const remote = 'wifi down && wifi up && date';
-    return new Promise(resolve => {
-      const stack = { out: [], err: [] };
-      const terminal = spawn('ssh', ['router', remote]);
-      terminal.stdout.on('data', stream => stack.out.push(stream.toString()));
-      terminal.stderr.on('data', stream => stack.err.push(stream.toString()));
-      terminal.on('close', code => {
-        if (code) logger.warn('remote failed');
-        logger.info(stack.out.join(''));
-        if (stack.err.length) logger.warn('stderr', stack.err.join(''));
-        resolve(code);
-      });
-      terminal.on('error', e => {
-        logger.error(e.message);
-        resolve(179);
-      });
-    });
+    return this.#exec(remote);
   }
 
   restart() {
     const remote = '/etc/init.d/repeater restart && date';
-    return new Promise(resolve => {
-      const stack = { out: [], err: [] };
-      const terminal = spawn('ssh', ['router', remote]);
-      terminal.stdout.on('data', stream => stack.out.push(stream.toString()));
-      terminal.stderr.on('data', stream => stack.err.push(stream.toString()));
-      terminal.on('close', code => {
-        if (code) logger.warn('remote failed');
-        logger.info(stack.out.join(''));
-        if (stack.err.length) logger.warn('stderr', stack.err.join(''));
-        resolve(code);
-      });
-      terminal.on('error', e => {
-        logger.error(e.message);
-        resolve(179);
-      });
-    });
+    return this.#exec(remote);
   }
 }
 

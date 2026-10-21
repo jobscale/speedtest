@@ -70,7 +70,7 @@ class App {
     await new Promise(resolve => { setTimeout(resolve, 1_000); });
     const stack = await wifi.list();
     const ssid = stack.out.join('').split('\n').filter(v => /^[*]/.test(v))[0].split(/[ ]+/)[2];
-    if (ssid !== 'BE-1ce-5G') await wifi.attach('BE-1ce-5G');
+    if (ssid !== 'blue-5G') await wifi.attach('blue-5G');
     await repeater.info();
     await wifi.attach('jobs');
     await rakuten.reboot();
