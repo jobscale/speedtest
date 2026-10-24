@@ -1,21 +1,20 @@
 import crypto from 'crypto';
 import { createLogger } from '@jobscale/create-logger';
+import { endpoint, session } from './config.js';
 import { store } from '../store.js';
 
 const { LOG_LEVEL } = process.env;
 
 const logger = createLogger(LOG_LEVEL || 'info');
-const endpoint = 'http://192.168.0.1';
-const cookie = 'PHPSESSID=6kh3ruiej9g33bvse1qppk8oe7';
 const headers = {
   accept: '*/*',
   'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
   'x-requested-with': 'XMLHttpRequest',
-  cookie,
+  cookie: session(),
 };
 
 const bluePrint = opts => {
-  const { input1, input2 = cookie, outing = 'hex' } = opts;
+  const { input1, input2 = session(), outing = 'hex' } = opts;
   const buf1 = Buffer.isBuffer(input1) ? input1 : Buffer.from(input1, 'utf-8');
   const buf2 = Buffer.isBuffer(input2) ? input2 : Buffer.from(input2, 'utf-8');
   const length = Math.min(buf1.length, buf2.length);
@@ -29,7 +28,7 @@ const bluePrint = opts => {
 const self = {
   get hash() {
     return crypto.createHash('sha256').update(
-      Buffer.from(cookie).toString('base64').split('').reverse().join(''),
+      Buffer.from(session()).toString('base64').split('').reverse().join(''),
     ).digest();
   },
 
