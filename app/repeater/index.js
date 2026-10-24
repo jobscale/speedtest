@@ -32,13 +32,8 @@ class Repeater {
     return this.#exec(remote);
   }
 
-  reset() {
-    const remote = 'wifi down && wifi up && date';
-    return this.#exec(remote);
-  }
-
   restart() {
-    const remote = '/etc/init.d/repeater restart && date';
+    const remote = 'wifi restart && date';
     return this.#exec(remote);
   }
 }

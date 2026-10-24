@@ -49,6 +49,15 @@ class App {
     });
   }
 
+  async rebootRakuten() {
+    const stack = await wifi.list();
+    const ssid = stack.out.join('').split('\n').filter(v => /^[*]/.test(v))[0].split(/[ ]+/)[2];
+    if (ssid !== 'blue-5G') await wifi.attach('blue-5G');
+    await repeater.info();
+    await wifi.attach('jobs');
+    await rakuten.reboot();
+  }
+
   async check(opts = { attempts: 4 }) {
     await this.execute();
     if (memo.ok) return;
@@ -68,12 +77,7 @@ class App {
       text,
     });
     await new Promise(resolve => { setTimeout(resolve, 1_000); });
-    const stack = await wifi.list();
-    const ssid = stack.out.join('').split('\n').filter(v => /^[*]/.test(v))[0].split(/[ ]+/)[2];
-    if (ssid !== 'blue-5G') await wifi.attach('blue-5G');
-    await repeater.info();
-    await wifi.attach('jobs');
-    await rakuten.reboot();
+    await this.rebootRakuten();
     process.exit(1);
   }
 
@@ -82,5 +86,5 @@ class App {
   }
 }
 
-new App().start()
-.catch(e => logger.error(e.cause?.message ?? e.cause ?? e.message));
+export const app = new App();
+app.start().catch(e => logger.error(e.cause?.message ?? e.message));
