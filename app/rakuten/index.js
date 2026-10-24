@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { createLogger } from '@jobscale/create-logger';
 import { store } from '../store.js';
 
@@ -26,6 +27,12 @@ const bluePrint = opts => {
 };
 
 const self = {
+  get hash() {
+    return crypto.createHash('sha256').update(
+      Buffer.from(cookie).toString('base64').split('').reverse().join(''),
+    ).digest();
+  },
+
   async getCsrfToken() {
     const method = 'GET';
     const url = `${endpoint}/login.php`;
@@ -44,8 +51,8 @@ const self = {
     const method = 'POST';
     const url = `${endpoint}/controller/password.php`;
     const csrfToken = store.getItem('csrfToken');
-    const input1 = Buffer.from('227860272a112078760e', 'hex');
-    const credential = bluePrint({ input1, outing: 'utf-8' });
+    const input1 = Buffer.from('f59171d0f44fe5ba665d', 'hex');
+    const credential = bluePrint({ input1, input2: self.hash, outing: 'utf-8' });
     const payload = {
       operate: 'login',
       username: 'admin',
